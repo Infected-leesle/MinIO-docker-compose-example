@@ -30,10 +30,12 @@ services:
       /bin/sh -c 
       "
         until mc config host add myminio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD}; do
-	  echo 'Waiting for MinIO service to start...'
-	  sleep 5
+          echo 'Waiting for MinIO service to start...'
+          sleep 5
         done;
-        mc mb myminio/BUCKET_NAME;
+        if ! mc ls myminio/BUCKET_NAME; then
+          mc mb myminio/BUCKET_NAME;
+        fi
         mc anonymous set public myminio/BUCKET_NAME;
         mc anonymous set download myminio/BUCKET_NAME;
         mc admin user add myminio SERVER_USER SERVER_USER_PASS;
